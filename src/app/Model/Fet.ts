@@ -1,6 +1,6 @@
 export class Fet {
 	name = '';
-	gr = 0; // Gate Resistance in Ohms
+	Rg = 0; // Gate Resistance in Ohms
 	rdson = 0;
 	vTh = 0;
 	Ciss = 0;

@@ -8,7 +8,8 @@ export class Project {
 	driveVoltage = 12;
 	supplyVoltage = 100;
 	tRise = 20; // in ns
-	loadInductance = 30; // in uH
+	loopInductance = 30; // in uH
+	switchingFrequency = 30; // in kHz
 
 	@FieldType({ ignore: true })
 	results: any;

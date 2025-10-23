@@ -90,9 +90,15 @@ import { Project }           from '../../Model/Project';
 					</td>
 				</tr>
 				<tr>
-					<td>Load inductance (uH)</td>
+					<td>Gate Loop inductance (uH)</td>
 					<td>
-						<input type="number" [(ngModel)]="p.selectedProject.loadInductance" class="form-control"/>
+						<input type="number" [(ngModel)]="p.selectedProject.loopInductance" class="form-control"/>
+					</td>
+				</tr>
+				<tr>
+					<td>Switching Frequency (kHz)</td>
+					<td>
+						<input type="number" [(ngModel)]="p.selectedProject.switchingFrequency" class="form-control"/>
 					</td>
 				</tr>
 			</table>

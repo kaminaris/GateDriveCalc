@@ -20,6 +20,10 @@
 						"browser": "src/main.ts",
 						"tsConfig": "tsconfig.app.json",
 						"inlineStyleLanguage": "scss",
+						"outputPath": {
+							"base": "dist/GateDriveCalc",
+							"browser": ""
+						},
 						"assets": [
 							{
 								"glob": "**/*",
@@ -56,6 +60,9 @@
 				},
 				"serve": {
 					"builder": "@angular/build:dev-server",
+					"options": {
+						"port": 50264
+					},
 					"configurations": {
 						"production": {
 							"buildTarget": "GateDriveCalc:build:production"

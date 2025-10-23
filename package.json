@@ -5,18 +5,10 @@
 		"ng": "ng",
 		"start": "ng serve",
 		"build": "ng build",
+		"build-gh": "ng build --base-href \"https://kaminaris.github.io/GateDriveCalc/\"",
+		"deploy-gh": "ngh --dir=dist/GateDriveCalc",
 		"watch": "ng build --watch --configuration development",
 		"test": "ng test"
-	},
-	"prettier": {
-		"overrides": [
-			{
-				"files": "*.html",
-				"options": {
-					"parser": "angular"
-				}
-			}
-		]
 	},
 	"private": true,
 	"dependencies": {
@@ -34,6 +26,7 @@
 		"@angular/build": "^20.1.5",
 		"@angular/cli": "^20.1.5",
 		"@angular/compiler-cli": "^20.1.0",
+		"angular-cli-ghpages": "^2.0.3",
 		"typescript": "~5.8.2"
 	}
 }

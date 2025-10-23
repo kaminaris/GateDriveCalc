@@ -49,7 +49,7 @@ import { FetService }        from '../../Service/FetService';
 				<tr>
 					<td>Gate Resistance</td>
 					<td>
-						<input type="number" [(ngModel)]="f.selectedFet.gr" class="form-control"/>
+						<input type="number" [(ngModel)]="f.selectedFet.Rg" class="form-control"/>
 					</td>
 				</tr>
 				<tr>
