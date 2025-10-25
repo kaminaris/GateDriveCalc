@@ -1,5 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { FormsModule }       from '@angular/forms';
+import { Hydrator }          from 'hydrator-next';
+import { Fet }               from '../../Model/Fet';
+import { GateDriver }        from '../../Model/GateDriver';
 import { FetService }        from '../../Service/FetService';
 import { GateDriverService } from '../../Service/GateDriverService';
 import { ProjectService }    from '../../Service/ProjectService';
@@ -16,6 +19,7 @@ import { Project }           from '../../Model/Project';
 			<button class="btn btn-primary" (click)="addProject()">Add Project</button>
 			<button class="btn btn-secondary" (click)="importProjects()">Import Projects</button>
 			<button class="btn btn-secondary" (click)="exportProjects()">Export Projects</button>
+			<button class="btn btn-danger" (click)="clearAll()">Clear All</button>
 		</div>
 		<div>
 			<h4>Select Project</h4>
@@ -90,7 +94,7 @@ import { Project }           from '../../Model/Project';
 					</td>
 				</tr>
 				<tr>
-					<td>Gate Loop inductance (uH)</td>
+					<td>Gate Loop inductance (nH)</td>
 					<td>
 						<input type="number" [(ngModel)]="p.selectedProject.loopInductance" class="form-control"/>
 					</td>
@@ -106,6 +110,7 @@ import { Project }           from '../../Model/Project';
 	`
 })
 export class ProjectComponent implements OnInit {
+	exportedJson = '';
 
 	constructor(
 		protected p: ProjectService,
@@ -124,12 +129,78 @@ export class ProjectComponent implements OnInit {
 		await this.p.save();
 	}
 
-	importProjects() {
+	async importProjects() {
+		const data = prompt('Paste project JSON here:');
+		if (!data) {
+			return;
+		}
 
+		try {
+			const raw = JSON.parse(data);
+			const fet = Hydrator.hydrate(Fet, raw.selectedFet);
+			if (!fet) {
+				throw new Error('FET cannot be parsed');
+			}
+
+			const driver = Hydrator.hydrate(GateDriver, raw.selectedDriver);
+			if (!driver) {
+				throw new Error('Gate Driver cannot be parsed');
+			}
+
+			raw.selectedFet = fet.name;
+			raw.selectedDriver = driver.name;
+			const project = Hydrator.hydrate(Project, raw);
+			if (!project) {
+				throw new Error('Project cannot be parsed');
+			}
+
+			let foundFetIdx = this.f.fets.findIndex(f => f.name === fet.name);
+			if (foundFetIdx < 0) {
+				this.f.fets.push(fet);
+				foundFetIdx = this.f.fets.length - 1;
+			} else {
+				this.f.fets[foundFetIdx] = fet;
+			}
+			await this.f.save();
+
+
+			let foundDriverIdx = this.d.drivers.findIndex(d => d.name === driver.name);
+			if (foundDriverIdx < 0) {
+				this.d.drivers.push(driver);
+				foundDriverIdx = this.d.drivers.length - 1;
+			} else {
+				this.d.drivers[foundDriverIdx] = driver;
+			}
+			await this.d.save();
+
+			let foundProjectIdx = this.p.projects.findIndex(p => p.name === project.name);
+			if (foundProjectIdx < 0) {
+				this.p.projects.push(project);
+			} else {
+				this.p.projects[foundProjectIdx] = project;
+			}
+			await this.p.save();
+		}
+		catch (e) {
+			alert('Failed to import project: ' + e);
+		}
+		finally {
+			this.exportedJson = '';
+			alert('Import complete');
+		}
 	}
 
 	exportProjects() {
-
+		if (!this.p.selectedProject) {
+			return;
+		}
+		const raw = Hydrator.dehydrate(this.p.selectedProject);
+		const rawFet = Hydrator.dehydrate(this.f.selectedFet);
+		const rawDriver = Hydrator.dehydrate(this.d.selectedDriver);
+		raw.selectedFet = rawFet;
+		raw.selectedDriver = rawDriver;
+		this.exportedJson = JSON.stringify(raw, null, 2);
+		prompt('Copy this to clipboard', this.exportedJson);
 	}
 
 	async saveProject() {
@@ -183,5 +254,14 @@ export class ProjectComponent implements OnInit {
 			console.log('Found selected Gate Driver:', foundDriver);
 			this.d.selectedDriver = foundDriver;
 		}
+	}
+
+	clearAll() {
+		if (!confirm('Are you sure you want to clear ALL projects? This action cannot be undone.')) {
+			return;
+		}
+		this.p.projects = [];
+		this.p.selectedProject = undefined;
+		this.p.save();
 	}
 }

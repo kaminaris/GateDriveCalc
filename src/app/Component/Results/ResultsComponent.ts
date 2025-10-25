@@ -1,6 +1,6 @@
 import { NgClass }           from '@angular/common';
 import { Component }         from '@angular/core';
-import { RouterOutlet }      from '@angular/router';
+import { KatexComponent }    from '../KatexComponent';
 import { FetService }        from '../../Service/FetService';
 import { GateDriverService } from '../../Service/GateDriverService';
 import { ProjectService }    from '../../Service/ProjectService';
@@ -8,14 +8,34 @@ import { ProjectService }    from '../../Service/ProjectService';
 @Component({
 	selector: 'app-results',
 	imports: [
-		NgClass
+		NgClass,
+		KatexComponent
 	],
 	template: `
 		<h2>Results</h2>
-		<p>
-			for the pullup, you can use R = ton * (Vcc - Vth) / (Coss * Vbridge)<br>
-			for the pulldown, you can use R = sqrt((L * Vcc) / (2 * Q_gate))
-		</p>
+		<div class="row">
+			<div class="col-12 mt-3">
+				Substituting values:
+				<div>
+					for the pullup, you can use
+					<!--			R = ton * (Vcc - Vth) / (Coss * Vbridge)-->
+					<katex [formula]="ronFormula"></katex>
+					<br>
+					@if (ronSub) {
+						<katex [formula]="ronSub"></katex>
+					}
+				</div>
+				<div class="mt-3">
+					for the pulldown, you can use
+					<!--			R = sqrt((L * Vcc) / (2 * Q_gate))-->
+					<katex [formula]="roffFormula"></katex>
+					<br>
+					@if (roffSub) {
+						<katex [formula]="roffSub"></katex>
+					}
+				</div>
+			</div>
+		</div>
 		<button class="btn btn-success" (click)="calculate()">Calculate</button>
 		@if (messages.length > 0) {
 			<div class="mt-3">
@@ -56,6 +76,12 @@ export class ResultsComponent {
 	iPeakOn = 0;
 	iPeakOff = 0;
 
+	ronFormula = `R_{on} = \\frac{T_{\\text{rise}}\\times\\,(V_{cc}-V_{th})}{C_{\\text{oss}}\\times\\,V_{\\text{bridge}}}`
+	// R = sqrt((L * Vcc) / (2 * Q_gate))
+	roffFormula = `R_{off} = \\sqrt{\\frac{L\\times\\,V_{cc}}{2\\times\\,Q_{\\text{gate}}}}`
+
+	ronSub = '';
+	roffSub = '';
 	messages: { type: 'warning' | 'info'; text: string }[] = [];
 
 	constructor(
@@ -91,10 +117,13 @@ export class ResultsComponent {
 		const Vth = fet.vTh;
 		const Coss = fet.Coss * 1e-12; // convert from pF to F
 		this.rOn = Ton * (Vcc - Vth) / (Coss * Vbridge);
+		this.ronSub = `R_{on} = \\frac{${(Ton * 1e9).toFixed(0)}\\,\\text{ns} \\times\\,(${Vcc}\\text{V}- ${Vth}\\text{V})}{${(Coss * 1e12).toFixed(0)}\\,\\text{pF} \\times\\, ${Vbridge}\\text{V}} = ${this.rOn.toFixed(2)}\\,\\Omega`;
 
-		const L = this.p.selectedProject.loopInductance * 1e-6; // convert from uH to H
+		// convert from nH to H which is 1e-9
+		const L = this.p.selectedProject.loopInductance * 1e-9;
 		const Q_gate = fet.Qg * 1e-9; // convert from nC to C
 		this.rOff = Math.sqrt((L * Vcc) / (2 * Q_gate));
+		this.roffSub = `R_{off} = \\sqrt{\\frac{${(L * 1e9).toFixed(0)}\\,\\text{nH} \\times\\, ${Vcc}\\text{V}}{2 \\times\\, ${fet.Qg.toFixed()}\\,\\text{nC}}} = ${this.rOff.toFixed(2)}\\,\\Omega`;
 
 		// Standard simplified calculation:
 		// const tRise = this.p.selectedProject.tRise * 1e-9;

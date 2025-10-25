@@ -19,6 +19,7 @@
 		"@angular/platform-browser": "^20.1.0",
 		"@angular/router": "^20.1.0",
 		"hydrator-next": "^1.4.3",
+		"katex": "^0.16.25",
 		"rxjs": "~7.8.0",
 		"tslib": "^2.3.0"
 	},
