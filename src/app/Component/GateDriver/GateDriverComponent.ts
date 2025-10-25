@@ -12,8 +12,8 @@ import { GateDriverService } from '../../Service/GateDriverService';
 		<h2>Gate Driver Management</h2>
 		<div class="btn-group mb-3">
 			<button class="btn btn-primary" (click)="addGateDriver()">Add GateDriver</button>
-			<button class="btn btn-secondary" (click)="importGateDrivers()">Import GateDrivers</button>
-			<button class="btn btn-secondary" (click)="exportGateDrivers()">Export GateDrivers</button>
+<!--			<button class="btn btn-secondary" (click)="importGateDrivers()">Import GateDrivers</button>-->
+<!--			<button class="btn btn-secondary" (click)="exportGateDrivers()">Export GateDrivers</button>-->
 		</div>
 		<div>
 			<h4>Select Driver</h4>

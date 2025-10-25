@@ -12,8 +12,8 @@ import { FetService }        from '../../Service/FetService';
 		<h2>FET Management</h2>
 		<div class="btn-group mb-3">
 			<button class="btn btn-primary" (click)="addFet()">Add FET</button>
-			<button class="btn btn-secondary" (click)="importFets()">Import FETs</button>
-			<button class="btn btn-secondary" (click)="exportFets()">Export FETs</button>
+<!--			<button class="btn btn-secondary" (click)="importFets()">Import FETs</button>-->
+<!--			<button class="btn btn-secondary" (click)="exportFets()">Export FETs</button>-->
 		</div>
 		<div>
 			<h4>Select FET</h4>
